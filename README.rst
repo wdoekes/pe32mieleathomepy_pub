@@ -59,7 +59,7 @@ The latter one, you can do yourself. It involves:
       Content-Type: application/vnd.miele.v1+json; charset=utf-8
       Access-Control-Allow-Origin:*
       Access-Control-Allow-Headers:*
-  
+
       {
         "Result":
         [
@@ -139,7 +139,7 @@ Appliance is connected to Wifi
 
 Now that the appliance has Wifi but has no app pairing, we will see the
 folling *DNS-SD advertisements*::
-    
+
     MIELE_LAN_IP.5353 > 224.0.0.251.5353: 0*- [0q] 4/0/3
       _mieleathome._tcp.local. PTR Miele WSI863._mieleathome._tcp.local.,
       Miele WSI863._mieleathome._tcp.local. SRV Miele-0011223344556677.local.:80 0 0,
@@ -251,7 +251,7 @@ app*; all communications go through *the cloud*. After a few seconds,
       Miele WSI863._mieleathome._tcp.local. SRV Miele-0011223344556677.local.:80 0 0,
       Miele-0011223344556677.local. (Cache flush) A MIELE_LAN_IP,
       Miele WSI863._mieleathome._tcp.local. (Cache flush) TXT "txtvers=1" "group=" "path=/" "security=1" "pairing=false" "devicetype=1" "con=0" "subtype=0" "s=0" (318)
-    
+
 Recommissioning ourselves, with ``11111...``::
 
     curl -XPUT MIELE_LAN_IP/Security/Commissioning/ \
@@ -310,7 +310,7 @@ See the `API docs <https://www.miele.com/developer/swagger-ui/>`_.
   applicance"*. (Or you can removing the pairing through the appliance menu.)
 
 - Check *mDNS* and wait for the ``"group="`` to go blank again.
-  
+
   Then you can do the ``/Security/Commissioning/`` curl (see above) with
   keys of your choosing.
 
@@ -329,7 +329,7 @@ See the `API docs <https://www.miele.com/developer/swagger-ui/>`_.
     print(json.dumps(mh.getDevices().toDict()))
 
   Yields:
-  
+
   .. code-block:: json
 
     {
@@ -341,9 +341,11 @@ See the `API docs <https://www.miele.com/developer/swagger-ui/>`_.
 
 There are no official docs for this. But apart from the mentioned ``/WLAN/`` and ``/Security/Commissioning/`` endpoints, there is:
 
-- ``GET /Update/``: ``{"NewerAvailable": false, "CurrentVersion":
-  "08.20", "AvailableVersion": "", "Type": "EK057", "ReleaseNotes": "",
-  "UpdateInProgress": false}``
+- ``GET /Update/``::
+
+    {"NewerAvailable": false, "CurrentVersion": "08.20",
+     "AvailableVersion": "", "Type": "EK057", "ReleaseNotes": "",
+     "UpdateInProgress": false}
 
 - ``GET /``::
 
@@ -355,7 +357,10 @@ There are no official docs for this. But apart from the mentioned ``/WLAN/`` and
      "WLAN": {"href": "WLAN/"},
      "Update": {"href": "Update/"}}
 
-- ``GET /Devices/``:: ``{"000123456789": {"href": "000123456789/", "Group": "0123456789ABCDEF", "Pairing": "false"}}``
+- ``GET /Devices/``::
+
+    {"000123456789": {
+     "href": "000123456789/", "Group": "0123456789ABCDEF", "Pairing": "false"}}
 
 And so on. Most of these require a ``Authorization: MieleH256 <GroupID>:<Signature>`` header.
 
@@ -430,4 +435,4 @@ P.S. Easy man in the middle:
 - get ``arpspoof`` (from ``dsniff`` package);
 - set ``net.ipv4.ip_forward=1`` sysctl;
 - make sure your firewall ``FORWARD`` rules aren't blocking;
-- ``arpspoof -i wlp166s0 -r -t APPLIANCE_IP PHONE_IP``
+- ``arpspoof -i wlp166s0 -r -t MIELE_LAN_IP HOMEAPP_IP``
