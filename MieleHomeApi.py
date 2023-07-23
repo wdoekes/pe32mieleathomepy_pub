@@ -98,9 +98,9 @@ class MieleHomeDevice:
         url = 'http://{}{}'.format(self.host, resource)
         date = self._get_date_str()
         signature = self._get_signature(resource, date)
-        headers = self._get_headers(date=date, auth='MieleH256 {}:{}'.format(self.group_id.hex(), signature.hexdigest().upper()))
+        headers = self._get_headers(date=date, auth='MieleH256 {}:{}'.format(self.group_id.hex().upper(), signature.hexdigest().upper()))
         response = requests.get(url, headers=headers, timeout=self.timeout)
-        response.raise_for_status
+        response.raise_for_status()
         response_signature = binascii.a2b_hex(response.headers['X-Signature'].split(':')[1])
         response_data = self._decrypt_response(response.content, response_signature)
         return self._parse_response(response_data)
@@ -129,8 +129,8 @@ class MieleHomeDevice:
         headers = self._get_headers()
         url = 'http://{}/Security/Commissioning/'.format(self.host)
         body = {
-            'GroupID': self.group_id.hex(),
-            'GroupKey': self.group_key.hex(),
+            'GroupID': self.group_id.hex().upper(),
+            'GroupKey': self.group_key.hex().upper(),
         }
         return requests.put(url, json=body, headers=headers, timeout=self.timeout)
 
@@ -138,8 +138,8 @@ class MieleHomeDevice:
 def easySetup():
     import random
     ip = input('Enter IP: ')
-    group_id = '%016x' % random.randrange(16**16)
-    group_key = '%0128x' % random.randrange(16**128)
+    group_id = '%016X' % random.randrange(16**16)
+    group_key = '%0128X' % random.randrange(16**128)
     device = MieleHomeDevice(ip, bytes.fromhex(group_id), bytes.fromhex(group_key))
 
     retry = 5
