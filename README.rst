@@ -424,3 +424,10 @@ The endpoints that the app connects to are also somewhere::
             }
         ]
     },
+
+P.S. Easy man in the middle:
+
+- get ``arpspoof`` (from ``dsniff`` package);
+- set ``net.ipv4.ip_forward=1`` sysctl;
+- make sure your firewall ``FORWARD`` rules aren't blocking;
+- ``arpspoof -i wlp166s0 -r -t APPLIANCE_IP PHONE_IP``
